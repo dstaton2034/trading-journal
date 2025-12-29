@@ -1,0 +1,11 @@
+{
+  "name": "Trading with De'",
+  "short_name": "De' Journal",
+  "start_url": "journal.html",
+  "scope": ".",
+  "display": "standalone",
+  "theme_color": "#f8a9c1",
+  "background_color": "#ffe6ef",
+  "description": "A pink, iPad-friendly futures trading journal with ICC workflow.",
+  "icons": []
+}

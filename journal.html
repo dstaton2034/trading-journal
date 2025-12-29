@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trading with De' — Futures Journal</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#f8a9c1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <style>
+    :root {
+      /* Soft pink palette (slightly darker, still gentle) */
+      --pink-50: #ffeef4;
+      --pink-75: #ffe6ef;
+      --pink-100: #ffdce7;
+      --pink-150: #ffd2df;
+      --pink-200: #ffc7d7;
+      --pink-250: #ffbcd0;
+      --pink-300: #f8a9c1; /* slightly deeper */
+      --pink-350: #f48fb1; /* Material Pink 300 */
+      --pink-400: #ef7aa5;
+      --text-900: #3b2c34;
+      --text-700: #543847;
+      --border: rgba(90, 63, 74, 0.12);
+      --shadow: 0 8px 24px rgba(90, 63, 74, 0.12);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+    }
+
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text-900);
+      background: radial-gradient(1200px 600px at 20% -10%, var(--pink-100), transparent),
+                  radial-gradient(1200px 600px at 80% -10%, var(--pink-75), transparent),
+                  linear-gradient(180deg, var(--pink-75), var(--pink-100));
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      background: var(--pink-75);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      position: sticky; top: 12px; z-index: 2;
+    }
+
+    header .title {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    header .note {
+      font-size: 14px;
+      color: var(--text-700);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .card h2 {
+      margin: 0 0 12px 0;
+      font-size: 18px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--pink-150);
+      border: 1px solid var(--border);
+      color: var(--text-700);
+      font-size: 12px;
+    }
+
+    /* Forms */
+    label { display:block; font-size: 14px; margin: 10px 0 6px; }
+    input, select, textarea, button {
+      width: 100%;
+      font-size: 16px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--pink-50);
+      color: var(--text-900);
+    }
+    textarea { min-height: 96px; }
+
+    button {
+      background: linear-gradient(180deg, var(--pink-250), var(--pink-200));
+      border: 1px solid rgba(90, 63, 74, 0.15);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button.secondary { background: linear-gradient(180deg, #fff, var(--pink-75)); }
+    button.danger { background: linear-gradient(180deg, #ffdde6, #ffcfe3); }
+
+    .row { display:flex; gap: 12px; }
+    .row > * { flex: 1; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); }
+    thead th { position: sticky; top: 0; background: var(--pink-100); }
+
+    .pill {
+      padding: 4px 8px; border-radius: 999px; font-size: 12px; display:inline-block;
+      border: 1px solid var(--border);
+    }
+    .trend-up { background: #ffeaf0; color: #7d3b5e; }
+    .trend-down { background: #ffe7ef; color: #7d3b5e; }
+    .trend-range { background: #fff0f5; color: #7d3b5e; }
+    .trend-breakout { background: #ffdbe6; color: #7d3b5e; }
+
+    /* SVG preview */
+    .svg-box { background: var(--pink-75); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 8px; }
+    .svg-desc { font-size: 13px; color: var(--text-700); margin-top: 6px; }
+
+    footer { margin: 24px 0; color: var(--text-700); font-size: 13px; }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      header { position: static; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="font-size: 32px; font-family: 'Brush Script MT', cursive, 'Apple Chancery', 'Comic Sans MS'; font-weight: 600; color: var(--text-900); letter-spacing: 0.5px;">Trading with De'</div>
+      <div class="row" style="width:auto; align-items:center; gap:8px;">
+        <a href="foundations.html"><button class="secondary" style="width:auto;">Foundations</button></a>
+        <div id="instrumentBanner" class="note">Instrument: none selected</div>
+      </div>
+    </header>
+
+    <div class="grid" style="margin-top: 18px;">
+      <!-- Daily Checklist -->
+      <section class="card" style="grid-column: span 5;">
+        <h2>Daily Prep Checklist <span class="badge">Tap to mark</span></h2>
+        <div class="row">
+          <div>
+            <label>Date</label>
+            <input id="date" type="date" />
+          </div>
+          <div>
+            <label>Session</label>
+            <select id="session">
+              <option value="US Open">US Open</option>
+              <option value="Power Hour">Power Hour</option>
+              <option value="Overnight">Overnight</option>
+            </select>
+          </div>
+        </div>
+        <div id="checklist" style="display:grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;"></div>
+        <div class="row" style="margin-top: 12px;">
+          <button id="saveChecklist">Save Checklist for Date</button>
+          <button class="secondary" id="clearChecklist">Clear Checklist</button>
+        </div>
+      </section>
+
+      <!-- R Visualizer -->
+      <section class="card" style="grid-column: span 12;">
+        <h2>R Visualizer (Risk vs Reward)</h2>
+        <p style="color: var(--text-700);">Enter Entry, Stop, Exit above; this visual shows how many times bigger the target is than your risk. Aim for 1.5–2R or more.</p>
+        <div id="rStats" style="font-size:14px; color:var(--text-700); margin-bottom:8px;">Risk: — · Reward: — · R: —</div>
+        <div style="background: var(--pink-75); border:1px solid var(--border); border-radius: 12px; padding: 10px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="min-width:80px;">Risk</div>
+            <div style="flex:1; background:#ffd2df; height:16px; border-radius:999px; position:relative;">
+              <div id="riskBar" style="background:#ef7aa5; height:100%; border-radius:999px; width:0%; transition: width 0.2s ease;"></div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; margin-top:10px;">
+            <div style="min-width:80px;">Reward</div>
+            <div style="flex:1; background:#ffdbe6; height:16px; border-radius:999px; position:relative;">
+              <div id="rewardBar" style="background:#f48fb1; height:100%; border-radius:999px; width:0%; transition: width 0.2s ease;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      </section>
+
+      <!-- Math & Formulas -->
+      <section class="card" style="grid-column: span 12;">
+        <h2>Math & Formulas</h2>
+        <div class="grid" style="grid-template-columns: repeat(12, 1fr); gap: 12px;">
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">Core Formulas</h3>
+            <ul>
+              <li>P&L ($) = ticks × tick value × contracts</li>
+              <li>Ticks = (Exit − Entry) ÷ tick size</li>
+              <li>Risk/trade ($) = |Entry − Stop| ÷ tick size × tick value × contracts</li>
+              <li>R multiple = |Exit − Entry| ÷ |Entry − Stop| × sign</li>
+              <li>Contracts = floor((Equity × Risk%) ÷ (stop ticks × tick value))</li>
+            </ul>
+            <p style="margin-top:6px; color: var(--text-700);">You don’t need advanced math—just consistent sizing and clear stops.</p>
+          </div>
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">Sizing Calculator</h3>
+            <div class="row">
+              <div>
+                <label>Equity ($)</label>
+                <input id="calcEquity" type="number" step="1" placeholder="5000" />
+              </div>
+              <div>
+                <label>Risk (%)</label>
+                <input id="calcRiskPct" type="number" step="0.1" placeholder="0.5" />
+              </div>
+              <div>
+                <label>Stop (ticks)</label>
+                <input id="calcStopTicks" type="number" step="1" placeholder="8" />
+              </div>
+              <div>
+                <label>Tick Value ($)</label>
+                <input id="calcTickValue" type="number" step="0.01" placeholder="1.25 (MES)" />
+              </div>
+            </div>
+            <div class="row" style="margin-top:8px;">
+              <button id="calcCompute">Compute Size</button>
+              <button class="secondary" id="calcClear">Clear</button>
+            </div>
+            <div class="row" style="margin-top:8px;">
+              <div>
+                <label>Contracts (recommended)</label>
+                <input id="calcContractsOut" disabled />
+              </div>
+              <div>
+                <label>Risk per Trade ($)</label>
+                <input id="calcRiskUsdOut" disabled />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- New Trade Entry -->
+      <section class="card" style="grid-column: span 12;">
+        <h2>New Trade Entry</h2>
+        <div class="row">
+          <div>
+            <label>Symbol (e.g., ES, MES, NQ)</label>
+            <input id="symbol" placeholder="ES" />
+          </div>
+          <div>
+            <label>Trend Type</label>
+            <select id="trend">
+              <option value="Uptrend">Uptrend</option>
+              <option value="Downtrend">Downtrend</option>
+              <option value="Range">Range</option>
+              <option value="Breakout">Breakout</option>
+            </select>
+          </div>
+          <div>
+            <label>Setup Name</label>
+            <input id="setup" placeholder="Opening Range Breakout" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Entry Price</label>
+            <input id="entry" type="number" step="0.01" />
+          </div>
+          <div>
+            <label>Stop Price</label>
+            <input id="stop" type="number" step="0.01" />
+          </div>
+          <div>
+            <label>Exit Price</label>
+            <input id="exit" type="number" step="0.01" />
+          </div>
+          <div>
+            <label>Contracts</label>
+            <input id="contracts" type="number" step="1" value="1" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Ticker/Feed (for reference)</label>
+            <input id="tickerFeed" placeholder="ES=F or broker symbol" />
+          </div>
+          <div>
+            <label>Tick Size (price)</label>
+            <input id="tickSize" type="number" step="0.001" placeholder="0.25 (ES)" />
+          </div>
+          <div>
+            <label>Tick Value (USD)</label>
+            <input id="tickValue" type="number" step="0.01" placeholder="12.50 (ES)" />
+          </div>
+          <div>
+            <label>Tags</label>
+            <input id="tags" placeholder="planned,A+" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Emotions / Notes</label>
+            <textarea id="notes" placeholder="Calm, focused; waited for pullback..."></textarea>
+          </div>
+          <div>
+            <label>Screenshots (links)</label>
+            <textarea id="shots" placeholder="Paste iCloud/OneDrive links"></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label><input type="checkbox" id="iccTrade" /> Mark as ICC trade</label>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Exit Reason</label>
+            <select id="exitReason">
+              <option value="Target">Target</option>
+              <option value="Stop">Stop</option>
+              <option value="Trail">Trailing Stop</option>
+              <option value="Manual">Manual Exit</option>
+              <option value="Time">Time Expired</option>
+            </select>
+          </div>
+          <div>
+            <label>Grade</label>
+            <select id="grade">
+              <option>A</option>
+              <option>B</option>
+              <option>C</option>
+              <option>D</option>
+            </select>
+          </div>
+          <div>
+            <label>Pre‑Trade Confidence (1–5)</label>
+            <input id="confidence" type="number" min="1" max="5" step="1" />
+          </div>
+          <div>
+            <label>Post‑Trade Feeling</label>
+            <select id="feeling">
+              <option>Neutral</option>
+              <option>Calm</option>
+              <option>Anxious</option>
+              <option>FOMO</option>
+              <option>Revenge</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:8px;">
+          <label>Mistakes (check all that apply)</label>
+          <div class="row">
+            <label><input type="checkbox" id="m_chase" /> Chased Entry</label>
+            <label><input type="checkbox" id="m_widen" /> Widened Stop</label>
+            <label><input type="checkbox" id="m_news" /> Traded News</label>
+            <label><input type="checkbox" id="m_unplanned" /> Not Planned</label>
+            <label><input type="checkbox" id="m_emotional" /> Emotional</label>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 8px;">
+          <button id="addTrade">Add Trade</button>
+          <button class="secondary" id="exportCSV">Export CSV</button>
+          <button class="danger" id="clearTrades">Clear All Trades</button>
+        </div>
+        <div style="margin-top: 12px; font-size: 14px; color: var(--text-700);">
+          Metrics auto-calc: R multiple, ticks, P&L. Fill tick size/value for accurate math.
+        </div>
+      </section>
+
+      <!-- Trades Table -->
+      <section class="card" style="grid-column: span 12;">
+        <h2>Trades</h2>
+        <div class="row">
+          <div>
+            <label>Filter by Symbol</label>
+            <input id="filterSymbol" placeholder="ES" />
+          </div>
+          <div>
+            <label>Filter by Date</label>
+            <input id="filterDate" type="date" />
+          </div>
+        </div>
+        <div style="overflow:auto; max-height: 50vh; margin-top: 8px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Symbol</th>
+                <th>Trend</th>
+                <th>Setup</th>
+                <th>Entry</th>
+                <th>Stop</th>
+                <th>Exit</th>
+                <th>Contracts</th>
+                <th>Ticks</th>
+                <th>P&L $</th>
+                <th>R</th>
+                <th>Tags</th>
+                <th>ICC</th>
+                <th>Exit Reason</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Summaries -->
+      <section class="card" style="grid-column: span 12;">
+        <h2>Summaries</h2>
+        <div class="row">
+          <div style="flex:1;">
+            <h3 style="margin:8px 0; font-size:16px;">Daily Summary</h3>
+            <div id="dailySummary" style="font-size:14px; color: var(--text-700);"></div>
+          </div>
+          <div style="flex:1;">
+            <h3 style="margin:8px 0; font-size:16px;">Weekly Summary</h3>
+            <div style="overflow:auto; max-height: 30vh;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Week</th>
+                    <th>Trades</th>
+                    <th>Win Rate</th>
+                    <th>Avg R</th>
+                    <th>Net P&L $</th>
+                  </tr>
+                </thead>
+                <tbody id="weeklyRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>Made with care. Local storage only; export regularly.</footer>
+  </div>
+
+  <script>
+    // Register service worker for iPad Add to Home Screen
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }
+    // Product presets for convenience
+    const PRESETS = {
+      ES: { tickSize: 0.25, tickValue: 12.5 },
+      MES: { tickSize: 0.25, tickValue: 1.25 },
+      NQ: { tickSize: 0.25, tickValue: 5 },
+      MNQ: { tickSize: 0.25, tickValue: 0.5 },
+      CL: { tickSize: 0.01, tickValue: 10 },
+      GC: { tickSize: 0.1, tickValue: 10 }
+    };
+    const INSTRUMENT_KEY = 'pinkJournalInstrument';
+
+    const checklistItems = [
+      'Economic calendar checked',
+      'Overnight high/low marked',
+      'Opening range defined',
+      'Key levels planned',
+      'Primary instruments selected',
+      'Risk/trade defined (0.5–1%)',
+      'Hotkeys/OCO configured',
+      'A+ setups only',
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const fmt = (n) => isFinite(n) ? Number(n).toFixed(2) : '';
+
+    // Build checklist UI
+    const checklistDiv = $('checklist');
+    checklistItems.forEach((txt, i) => {
+      const id = 'chk_'+i;
+      const wrap = document.createElement('label');
+      wrap.style.display = 'flex';
+      wrap.style.alignItems = 'center';
+      wrap.style.gap = '8px';
+      const input = document.createElement('input');
+      input.type = 'checkbox'; input.id = id;
+      const span = document.createElement('span'); span.textContent = txt;
+      wrap.appendChild(input); wrap.appendChild(span);
+      checklistDiv.appendChild(wrap);
+    });
+
+    // Load/save checklist
+    const checklistKey = (date) => `pinkJournalChecklist:${date}`;
+    function saveChecklist() {
+      const date = $('date').value || new Date().toISOString().slice(0,10);
+      const vals = checklistItems.map((_, i) => $('chk_'+i).checked ? 1 : 0);
+      localStorage.setItem(checklistKey(date), JSON.stringify(vals));
+      alert('Checklist saved for '+date);
+    }
+    function loadChecklist() {
+      const date = $('date').value || new Date().toISOString().slice(0,10);
+      const raw = localStorage.getItem(checklistKey(date));
+      if (!raw) return;
+      const vals = JSON.parse(raw);
+      checklistItems.forEach((_, i) => { $('chk_'+i).checked = !!vals[i]; });
+    }
+    $('saveChecklist').addEventListener('click', saveChecklist);
+    $('clearChecklist').addEventListener('click', () => {
+      const date = $('date').value || new Date().toISOString().slice(0,10);
+      localStorage.removeItem(checklistKey(date));
+      checklistItems.forEach((_, i) => { $('chk_'+i).checked = false; });
+    });
+    $('date').addEventListener('change', loadChecklist);
+    $('date').value = new Date().toISOString().slice(0,10);
+    loadChecklist();
+
+    // Trades storage
+    const STORAGE_KEY = 'pinkJournalTrades:v1';
+    function getTrades() { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+    function setTrades(arr) { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
+
+    // Set instrument from Foundations if saved
+    (function initInstrument(){
+      const inst = localStorage.getItem(INSTRUMENT_KEY) || '';
+      const banner = document.getElementById('instrumentBanner');
+      if (inst && PRESETS[inst]){
+        banner.textContent = `Instrument: ${inst} (tick ${PRESETS[inst].tickSize}, $${PRESETS[inst].tickValue}/tick)`;
+        const sym = document.getElementById('symbol'); if (sym) sym.value = inst;
+        const ts = document.getElementById('tickSize'); if (ts) ts.value = PRESETS[inst].tickSize;
+        const tv = document.getElementById('tickValue'); if (tv) tv.value = PRESETS[inst].tickValue;
+      }
+    })();
+
+    // Auto-preset tick size/value by symbol
+    $('symbol').addEventListener('blur', () => {
+      const s = $('symbol').value.trim().toUpperCase();
+      if (PRESETS[s]) {
+        $('tickSize').value = PRESETS[s].tickSize;
+        $('tickValue').value = PRESETS[s].tickValue;
+      }
+    });
+
+    // Sizing calculator
+    function computeSize() {
+      const eq = parseFloat($('calcEquity').value);
+      const rp = parseFloat($('calcRiskPct').value);
+      const st = parseFloat($('calcStopTicks').value);
+      const tv = parseFloat($('calcTickValue').value);
+      if (!isFinite(eq) || !isFinite(rp) || !isFinite(st) || !isFinite(tv) || eq<=0 || rp<=0 || st<=0 || tv<=0) {
+        alert('Fill equity, risk %, stop ticks, and tick value.');
+        return;
+      }
+      const riskUsd = eq * (rp/100);
+      const perContractRisk = st * tv;
+      const contracts = Math.floor(riskUsd / perContractRisk);
+      $('calcContractsOut').value = contracts;
+      $('calcRiskUsdOut').value = fmt(riskUsd);
+    }
+    $('calcCompute').addEventListener('click', computeSize);
+    $('calcClear').addEventListener('click', () => {
+      ['calcEquity','calcRiskPct','calcStopTicks','calcTickValue','calcContractsOut','calcRiskUsdOut'].forEach(id => { const el = $(id); if (el) el.value=''; });
+    });
+
+    function addTrade() {
+      const date = $('date').value || new Date().toISOString().slice(0,10);
+      const symbol = $('symbol').value.trim().toUpperCase();
+      const trend = $('trend').value;
+      const setup = $('setup').value.trim();
+      const entry = parseFloat($('entry').value);
+      const stop = parseFloat($('stop').value);
+      const exit = parseFloat($('exit').value);
+      const contracts = parseInt($('contracts').value || '1', 10);
+      const tickSize = parseFloat($('tickSize').value);
+      const tickValue = parseFloat($('tickValue').value);
+      const tags = $('tags').value.trim();
+      const notes = $('notes').value.trim();
+      const shots = $('shots').value.trim();
+      const icc = $('iccTrade').checked ? 1 : 0;
+      const exitReason = $('exitReason').value;
+      const grade = $('grade').value;
+      const confidence = parseInt(($('confidence').value||'').trim()||'0',10) || '';
+      const feeling = $('feeling').value;
+      const mistakes = [
+        $('m_chase').checked ? 'Chased' : null,
+        $('m_widen').checked ? 'Widened' : null,
+        $('m_news').checked ? 'News' : null,
+        $('m_unplanned').checked ? 'Unplanned' : null,
+        $('m_emotional').checked ? 'Emotional' : null,
+      ].filter(Boolean).join('|');
+
+      if (!symbol || !isFinite(entry) || !isFinite(stop) || !isFinite(exit)) {
+        alert('Please fill symbol, entry, stop, exit.');
+        return;
+      }
+
+      const riskPerUnit = Math.abs(entry - stop);
+      const rMultiple = riskPerUnit > 0 ? (Math.abs(exit - entry) / riskPerUnit) * (exit >= entry ? 1 : -1) : '';
+      const tickDiff = (isFinite(tickSize) && tickSize > 0) ? Math.round((exit - entry) / tickSize) : '';
+      const pnl = (isFinite(tickValue) && tickDiff!=='') ? tickDiff * tickValue * contracts : '';
+
+      const row = { date, symbol, trend, setup, entry, stop, exit, contracts, tickSize, tickValue, tags, notes, shots, icc, tickDiff, pnl, rMultiple, exitReason, grade, confidence, feeling, mistakes };
+      const trades = getTrades(); trades.unshift(row); setTrades(trades);
+      renderRows();
+      clearForm();
+    }
+
+    // R visualizer updates from entry/stop/exit
+    function updateR(){
+      const entry = parseFloat(($('entry').value||'').trim());
+      const stop = parseFloat(($('stop').value||'').trim());
+      const exit = parseFloat(($('exit').value||'').trim());
+      const risk = (isFinite(entry) && isFinite(stop)) ? Math.abs(entry - stop) : NaN;
+      const reward = (isFinite(entry) && isFinite(exit)) ? Math.abs(exit - entry) : NaN;
+      const r = (isFinite(risk) && risk>0 && isFinite(reward)) ? reward / risk : NaN;
+      $('rStats').textContent = `Risk: ${isFinite(risk)?fmt(risk):'—'} · Reward: ${isFinite(reward)?fmt(reward):'—'} · R: ${isFinite(r)?fmt(r):'—'}`;
+      const maxScale = 200; // px scale reference
+      const riskPct = isFinite(risk) && risk>0 ? Math.min(100, (risk / (risk + (reward||0))) * 100) : 0;
+      const rewardPct = isFinite(reward) && isFinite(risk) && (risk+reward)>0 ? Math.min(100, (reward / (risk + reward)) * 100) : 0;
+      $('riskBar').style.width = `${riskPct}%`;
+      $('rewardBar').style.width = `${rewardPct}%`;
+    }
+    ['entry','stop','exit'].forEach(id => { const el=$(id); if(el) el.addEventListener('input', updateR); });
+    updateR();
+
+    function clearForm() {
+      ['symbol','trend','setup','entry','stop','exit','contracts','tickerFeed','tickSize','tickValue','tags','notes','shots'].forEach(id => {
+        const el = $(id);
+        if (!el) return;
+        if (id==='trend') el.value = 'Uptrend';
+        else if (id==='contracts') el.value = '1';
+        else el.value = '';
+      });
+      ['exitReason','grade','confidence','feeling'].forEach(id => { const el = $(id); if (el) el.value = ''; });
+      ['m_chase','m_widen','m_news','m_unplanned','m_emotional'].forEach(id => { const el = $(id); if (el) el.checked = false; });
+      const iccEl = $('iccTrade'); if (iccEl) iccEl.checked = false;
+    }
+
+    function renderRows() {
+      const tbody = $('rows');
+      tbody.innerHTML = '';
+      const trades = getTrades();
+      const fSym = $('filterSymbol').value.trim().toUpperCase();
+      const fDate = $('filterDate').value;
+
+      trades
+        .filter(t => (!fSym || t.symbol.includes(fSym)) && (!fDate || t.date===fDate))
+        .forEach(t => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${t.date}</td>
+            <td>${t.symbol}</td>
+            <td><span class="pill trend-${t.trend.toLowerCase()}">${t.trend}</span></td>
+            <td>${t.setup}</td>
+            <td>${fmt(t.entry)}</td>
+            <td>${fmt(t.stop)}</td>
+            <td>${fmt(t.exit)}</td>
+            <td>${t.contracts}</td>
+            <td>${t.tickDiff!=='' ? t.tickDiff : ''}</td>
+            <td>${t.pnl!=='' ? fmt(t.pnl) : ''}</td>
+            <td>${t.rMultiple!=='' ? fmt(t.rMultiple) : ''}</td>
+            <td>${t.tags || ''}</td>
+            <td>${t.icc ? 'Yes' : ''}</td>
+            <td>${t.exitReason || ''}</td>
+            <td>${t.grade || ''}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+    }
+
+    function exportCSV() {
+      const trades = getTrades();
+      if (!trades.length) { alert('No trades to export.'); return; }
+      const cols = ['date','symbol','trend','setup','entry','stop','exit','contracts','tickSize','tickValue','tickDiff','pnl','rMultiple','tags','icc','exitReason','grade','confidence','feeling','mistakes','notes','shots'];
+      const lines = [cols.join(',')].concat(trades.map(t => cols.map(c => JSON.stringify(t[c] ?? '')).join(',')));
+      const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'pink_journal_trades.csv'; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    $('addTrade').addEventListener('click', addTrade);
+    $('exportCSV').addEventListener('click', exportCSV);
+    $('clearTrades').addEventListener('click', () => {
+      if (confirm('Clear all trades?')) { localStorage.removeItem(STORAGE_KEY); renderRows(); }
+    });
+    $('filterSymbol').addEventListener('input', renderRows);
+    $('filterDate').addEventListener('change', renderRows);
+
+    // Summaries
+    function toISOWeek(dateStr){
+      const d = new Date(dateStr);
+      const target = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const dayNum = target.getUTCDay() || 7;
+      target.setUTCDate(target.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(target.getUTCFullYear(),0,1));
+      const weekNo = Math.ceil((((target - yearStart) / 86400000) + 1) / 7);
+      return `${target.getUTCFullYear()}-W${String(weekNo).padStart(2,'0')}`;
+    }
+
+    function computeDailySummary() {
+      const trades = getTrades();
+      const day = $('filterDate').value || ($('date').value || new Date().toISOString().slice(0,10));
+      const list = trades.filter(t => t.date === day && isFinite(t.pnl));
+      const count = list.length;
+      const net = list.reduce((a,b)=>a+Number(b.pnl||0),0);
+      const wins = list.filter(t => Number(t.pnl||0) > 0).length;
+      const winRate = count ? (100*wins/count) : 0;
+      const avgR = count ? (list.reduce((a,b)=>a+Number(b.rMultiple||0),0)/count) : 0;
+      $('dailySummary').innerHTML = `Date: ${day} · Trades: ${count} · Win Rate: ${fmt(winRate)}% · Avg R: ${fmt(avgR)} · Net P&L: $${fmt(net)}`;
+    }
+
+    function computeWeeklySummary() {
+      const trades = getTrades().filter(t => isFinite(t.pnl));
+      const map = new Map();
+      trades.forEach(t => {
+        const wk = toISOWeek(t.date);
+        if (!map.has(wk)) map.set(wk, []);
+        map.get(wk).push(t);
+      });
+      const tbody = $('weeklyRows');
+      tbody.innerHTML = '';
+      Array.from(map.entries()).sort((a,b)=>a[0] < b[0] ? 1 : -1).slice(0,8).forEach(([wk, arr]) => {
+        const count = arr.length;
+        const net = arr.reduce((a,b)=>a+Number(b.pnl||0),0);
+        const wins = arr.filter(t => Number(t.pnl||0) > 0).length;
+        const winRate = count ? (100*wins/count) : 0;
+        const avgR = count ? (arr.reduce((a,b)=>a+Number(b.rMultiple||0),0)/count) : 0;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${wk}</td>
+          <td>${count}</td>
+          <td>${fmt(winRate)}%</td>
+          <td>${fmt(avgR)}</td>
+          <td>$${fmt(net)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function refreshUI(){ renderRows(); computeDailySummary(); computeWeeklySummary(); }
+
+    renderRows();
+    computeDailySummary();
+    computeWeeklySummary();
+  </script>
+</body>
+</html>

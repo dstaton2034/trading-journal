@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trading with De' — Foundations</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#f8a9c1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <style>
+    :root {
+      --pink-50: #ffeef4;
+      --pink-75: #ffe6ef;
+      --pink-100: #ffdce7;
+      --pink-150: #ffd2df;
+      --pink-200: #ffc7d7;
+      --pink-250: #ffbcd0;
+      --pink-300: #f8a9c1;
+      --text-900: #3b2c34;
+      --text-700: #543847;
+      --border: rgba(90, 63, 74, 0.12);
+      --shadow: 0 8px 24px rgba(90, 63, 74, 0.12);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+    }
+    html, body { margin:0; padding:0; height:100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial; color: var(--text-900);
+      background: radial-gradient(1200px 600px at 20% -10%, var(--pink-100), transparent),
+                  radial-gradient(1200px 600px at 80% -10%, var(--pink-75), transparent),
+                  linear-gradient(180deg, var(--pink-75), var(--pink-100)); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 20px; background: var(--pink-75); border:1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); position: sticky; top:12px; z-index:2; }
+    .grid { display:grid; grid-template-columns: repeat(12, 1fr); gap: 18px; }
+    .card { background:#fff; border:1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding:16px; }
+    .card h2 { margin:0 0 12px 0; font-size:18px; }
+    .row { display:flex; gap:12px; }
+    label { display:block; font-size:14px; margin:10px 0 6px; }
+    input, select, button { width:100%; font-size:16px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background: var(--pink-50); color: var(--text-900); }
+    button { background: linear-gradient(180deg, var(--pink-250), var(--pink-200)); cursor:pointer; font-weight:600; }
+    .svg-box { background: var(--pink-75); border: 1px solid var(--border); border-radius: 12px; padding: 8px; }
+    .svg-desc { font-size: 13px; color: var(--text-700); margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="font-size: 32px; font-family: 'Brush Script MT', cursive, 'Apple Chancery', 'Comic Sans MS'; font-weight: 600; color: var(--text-900); letter-spacing: 0.5px;">Trading with De' — Foundations</div>
+      <div class="row" style="width:auto;">
+        <a href="journal.html"><button>Open Journal</button></a>
+      </div>
+    </header>
+
+    <div class="grid" style="margin-top:18px;">
+      <section class="card" style="grid-column: span 6;">
+        <h2>Choose Your Market</h2>
+        <p style="color:var(--text-700)">Pick one and stay with it for 30 trading days.</p>
+        <div class="row">
+          <div>
+            <label><input type="radio" name="instrument" value="MES" /> MES (Micro E-mini S&P 500)</label>
+            <div style="font-size:13px; color:var(--text-700)">Tick size 0.25, tick value $1.25; smoother, beginner-friendly.</div>
+          </div>
+          <div>
+            <label><input type="radio" name="instrument" value="MNQ" /> MNQ (Micro E-mini Nasdaq)</label>
+            <div style="font-size:13px; color:var(--text-700)">Tick size 0.25, tick value $0.50; faster, more volatile.</div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <div>
+            <label><input type="radio" name="instrument" value="ES" /> ES (E-mini S&P 500)</label>
+            <div style="font-size:13px; color:var(--text-700)">Tick size 0.25, tick value $12.50; use only after consistent micros.</div>
+          </div>
+          <div>
+            <label><input type="radio" name="instrument" value="NQ" /> NQ (E-mini Nasdaq)</label>
+            <div style="font-size:13px; color:var(--text-700)">Tick size 0.25, tick value $5.00; fast and unforgiving.</div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px;">
+          <button id="saveInstrument">Save Market</button>
+          <button class="secondary" id="clearInstrument">Clear</button>
+        </div>
+        <div id="instrumentStatus" style="margin-top:8px; font-size:14px; color:var(--text-700)"></div>
+      </section>
+
+      <section class="card" style="grid-column: span 6;">
+        <h2>Why ES vs NQ?</h2>
+        <ul style="color:var(--text-700)">
+          <li><strong>ES/MES</strong>: smoother, cleaner trends; ideal for learning discipline and ICC structure.</li>
+          <li><strong>NQ/MNQ</strong>: faster, bigger swings; requires tighter execution and emotional control.</li>
+          <li><strong>Recommendation</strong>: start with <strong>MES</strong> unless you crave speed; ICC works on both.</li>
+          <li>Trade NY session window; avoid lunch lull and major news spikes.</li>
+        </ul>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>Foundations</h2>
+        <div class="grid" style="grid-template-columns: repeat(12, 1fr); gap: 12px;">
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">What You’re Trading</h3>
+            <p>Futures let you trade <strong>price movement</strong> intraday without owning the asset. Focus on one instrument and one setup. Each product has a <strong>tick size</strong> and <strong>tick value</strong> that define P&L per tick.</p>
+            <h3 style="margin:8px 0; font-size:16px;">Reading Price</h3>
+            <p>Trends and ranges form around <strong>support</strong> and <strong>resistance</strong>. <strong>Liquidity</strong> sits above highs and below lows; many breakouts fail unless liquidity is taken and structure holds.</p>
+            <h3 style="margin:8px 0; font-size:16px;">Timeframes</h3>
+            <p>Bias on 1–4h, structure on 15m, timing on 1–5m. Use higher timeframes for truth; lower timeframes for entries only.</p>
+          </div>
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">Risk & Rules</h3>
+            <p>Stops mark invalidation. Risk 0.5–1% per trade. Aim ≥1.5–2R. If you cannot identify trend/structure/liquidity, do not trade. This is a craft, not a chase.</p>
+            <h3 style="margin:8px 0; font-size:16px;">How to Think</h3>
+            <p>Ask: Was liquidity taken first? Where was price rejected? Is structure respected? If choppy, stand aside.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>Open Notes</h2>
+        <p style="color:var(--text-700); margin-bottom:12px;">Use this space to jot down observations, setups, or thoughts. Notes save automatically per day.</p>
+        <div>
+          <label for="notesDate">Date</label>
+          <input type="date" id="notesDate" />
+        </div>
+        <div style="margin-top:12px;">
+          <label for="notesTextarea">Notes</label>
+          <textarea id="notesTextarea" rows="10" style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--pink-50); font-family:inherit; font-size:16px; resize:vertical;"></textarea>
+        </div>
+        <div class="row" style="margin-top:12px;">
+          <button id="saveNotes">Save Notes</button>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>ICC Strategy (Indication → Correction → Continuation)</h2>
+        <div class="grid" style="grid-template-columns: repeat(12, 1fr); gap: 12px;">
+          <div style="grid-column: span 4;">
+            <h3 style="margin:8px 0; font-size:16px;">🔍 Indication</h3>
+            <p><strong>What it is:</strong> The initial move that establishes trend bias. This is the first leg that shows directional strength.</p>
+            <p><strong>What to look for:</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Strong directional candles (large body, small wicks)</li>
+              <li>Volume expansion on the move</li>
+              <li>Breaking through a key level or liquidity pool</li>
+              <li>Occurs during high-volume sessions (NY open, London/NY overlap)</li>
+            </ul>
+            <p style="color:var(--text-700); margin-top:8px;"><strong>Key:</strong> This sets your bias. If you miss the Indication, wait for the next setup—don't chase.</p>
+          </div>
+          <div style="grid-column: span 4;">
+            <h3 style="margin:8px 0; font-size:16px;">↩️ Correction</h3>
+            <p><strong>What it is:</strong> The pullback or retracement after the Indication. Price returns to test structure or liquidity.</p>
+            <p><strong>What to look for:</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Shallow retracement (30-50% of Indication move ideal)</li>
+              <li>Smaller candles, choppy action = weak sellers/buyers</li>
+              <li>Pulls back to key support/resistance, VWAP, or prior swing</li>
+              <li>Time spent correcting (not too fast, not too long)</li>
+            </ul>
+            <p style="color:var(--text-700); margin-top:8px;"><strong>Key:</strong> This is your entry zone. Mark your levels during the Correction phase.</p>
+          </div>
+          <div style="grid-column: span 4;">
+            <h3 style="margin:8px 0; font-size:16px;">🚀 Continuation</h3>
+            <p><strong>What it is:</strong> Price resumes in the direction of the Indication. This is where you enter and ride the move.</p>
+            <p><strong>What to look for:</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Strong candle in Indication direction breaking Correction high/low</li>
+              <li>Volume returns (confirms buyers/sellers are back)</li>
+              <li>Clean rejection of your entry level</li>
+              <li>Enter on break of Correction structure, stop below/above entry level</li>
+            </ul>
+            <p style="color:var(--text-700); margin-top:8px;"><strong>Key:</strong> Enter as Continuation starts. Target prior high/low or next liquidity zone.</p>
+          </div>
+        </div>
+        <div style="margin-top:12px; padding:12px; background:var(--pink-75); border-radius:12px;">
+          <p style="margin:0; font-weight:600;">✅ A+ ICC Setup Checklist:</p>
+          <ul style="color:var(--text-700); font-size:14px; margin:6px 0 0 0;">
+            <li>Clear Indication with volume during NY session (9:30-11am ET ideal)</li>
+            <li>Correction holds a key level (prior swing, VWAP, overnight range)</li>
+            <li>Continuation candle shows strength and breaks Correction structure</li>
+            <li>Risk is defined: stop just beyond Correction extreme</li>
+            <li>Reward is clear: prior high/low or next liquidity pool at 1.5-2R minimum</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>Position Sizing Examples</h2>
+        <p style="color:var(--text-700);">Position sizing protects your capital and keeps you in the game. Risk a fixed % per trade (0.5-1%) so no single trade can hurt you.</p>
+        <div class="grid" style="grid-template-columns: repeat(12, 1fr); gap: 12px; margin-top:12px;">
+          <div style="grid-column: span 6; padding:12px; background:var(--pink-75); border-radius:12px;">
+            <h3 style="margin:0 0 8px 0; font-size:16px;">Example 1: MES Trade ($10,000 account, 1% risk)</h3>
+            <ul style="color:var(--text-700); font-size:14px; margin:0;">
+              <li><strong>Account:</strong> $10,000</li>
+              <li><strong>Risk per trade:</strong> 1% = $100</li>
+              <li><strong>Entry:</strong> 4500.00, <strong>Stop:</strong> 4496.00 (4 points = 16 ticks)</li>
+              <li><strong>Risk in ticks:</strong> 16 ticks</li>
+              <li><strong>MES tick value:</strong> $1.25/tick</li>
+              <li><strong>Risk per contract:</strong> 16 ticks × $1.25 = $20</li>
+              <li><strong>Contracts:</strong> $100 ÷ $20 = <strong>5 contracts</strong></li>
+            </ul>
+            <p style="color:var(--text-700); margin-top:8px; font-size:13px;">If stopped out, you lose $100 (1%). If target at 4506.00 (6 points), you gain 24 ticks × $1.25 × 5 = $150 (1.5R).</p>
+          </div>
+          <div style="grid-column: span 6; padding:12px; background:var(--pink-75); border-radius:12px;">
+            <h3 style="margin:0 0 8px 0; font-size:16px;">Example 2: MNQ Trade ($5,000 account, 0.5% risk)</h3>
+            <ul style="color:var(--text-700); font-size:14px; margin:0;">
+              <li><strong>Account:</strong> $5,000</li>
+              <li><strong>Risk per trade:</strong> 0.5% = $25</li>
+              <li><strong>Entry:</strong> 16800.00, <strong>Stop:</strong> 16790.00 (10 points = 40 ticks)</li>
+              <li><strong>Risk in ticks:</strong> 40 ticks</li>
+              <li><strong>MNQ tick value:</strong> $0.50/tick</li>
+              <li><strong>Risk per contract:</strong> 40 ticks × $0.50 = $20</li>
+              <li><strong>Contracts:</strong> $25 ÷ $20 = <strong>1 contract</strong></li>
+            </ul>
+            <p style="color:var(--text-700); margin-top:8px; font-size:13px;">If stopped out, you lose $20. If target at 16820.00 (20 points), you gain 80 ticks × $0.50 × 1 = $40 (2R).</p>
+          </div>
+        </div>
+        <div style="margin-top:12px; padding:12px; background:var(--pink-100); border:1px solid var(--border); border-radius:12px;">
+          <p style="margin:0; font-weight:600;">📐 Formula: Contracts = (Account × Risk%) ÷ (Stop Distance in Ticks × Tick Value)</p>
+          <p style="color:var(--text-700); margin:6px 0 0 0; font-size:14px;">Always round DOWN. Never risk more than your rule allows. Start conservative (0.5%) until consistent.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>Market Session Timing</h2>
+        <div class="grid" style="grid-template-columns: repeat(12, 1fr); gap: 12px;">
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">🕐 Session Overview</h3>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li><strong>Asia Session:</strong> 6pm-3am ET — Slow, range-bound. Sets overnight high/low.</li>
+              <li><strong>London Open:</strong> 3am-4am ET — First volatility spike. Watch for liquidity sweeps.</li>
+              <li><strong>NY Open:</strong> 9:30am-11:00am ET — <strong>PRIME TIME.</strong> Highest volume, cleanest trends.</li>
+              <li><strong>Lunch:</strong> 11:30am-1:30pm ET — Chop, low volume. Avoid unless strong trend continues.</li>
+              <li><strong>NY Close:</strong> 3pm-4pm ET — Final push or reversal. Can be volatile but tricky.</li>
+            </ul>
+          </div>
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">⏰ Best Times to Trade ICC</h3>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li><strong>9:30-11:00am ET:</strong> Indication forms at open, Correction during first pullback, Continuation by 10-11am.</li>
+              <li><strong>8:30-9:30am ET:</strong> Pre-market can show Indication if economic data releases. Wait for NY open confirmation.</li>
+              <li><strong>Avoid:</strong> Asian session (too slow), lunch hour (choppy), last 15 min of day (unpredictable).</li>
+            </ul>
+            <h3 style="margin:16px 0 8px 0; font-size:16px;">📅 Days to Trade</h3>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li><strong>Tuesday-Thursday:</strong> Most consistent. Market is "warmed up" and not distorted by weekend gaps.</li>
+              <li><strong>Monday:</strong> Can be choppy as market digests weekend news. Wait for clear structure.</li>
+              <li><strong>Friday:</strong> Watch for early profit-taking and position squaring. Trends can fade after 11am.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>Reading Charts & Price Action</h2>
+        <div class="grid" style="grid-template-columns: repeat(12, 1fr); gap: 12px;">
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">📊 Timeframe Strategy</h3>
+            <p><strong>Higher Timeframe (1h-4h):</strong> Identifies overall bias and major structure.</p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Mark major swing highs/lows, support/resistance zones</li>
+              <li>Identify trend: Are we making higher highs/lows or lower highs/lows?</li>
+              <li>Locate liquidity pools (above highs, below lows)</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>Mid Timeframe (15m):</strong> Refines structure and shows ICC pattern clearly.</p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Spot the Indication leg (strong directional move)</li>
+              <li>Track the Correction (pullback to key level)</li>
+              <li>Identify entry zones for Continuation</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>Lower Timeframe (1m-5m):</strong> Times your entry precisely.</p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Wait for Continuation candle to break Correction structure</li>
+              <li>Enter on strong candle close in trend direction</li>
+              <li>Set stop just beyond Correction extreme (2-4 points for micros)</li>
+            </ul>
+          </div>
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">🔍 What to Look For</h3>
+            <p><strong>Strong Candles (Indication/Continuation):</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Large body, small wicks = conviction</li>
+              <li>Closes near high (uptrend) or low (downtrend)</li>
+              <li>Multiple candles in same direction = momentum</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>Weak Candles (Correction):</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Small bodies, large wicks = indecision</li>
+              <li>Overlapping candles = chop, no follow-through</li>
+              <li>Low volume = pause, not reversal</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>Key Levels:</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Prior day high/low</li>
+              <li>Overnight high/low</li>
+              <li>Opening range (first 30 min of NY session)</li>
+              <li>VWAP (volume-weighted average price)</li>
+              <li>Round numbers (4500, 16800, etc.)</li>
+            </ul>
+            <p style="margin-top:8px; color:var(--text-700); font-size:13px;"><strong>Remember:</strong> Price respects levels where volume traded. Breaks without volume usually fail.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>Entry & Exit Techniques</h2>
+        <div class="grid" style="grid-template-columns: repeat(12, 1fr); gap: 12px;">
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">🎯 Entry Rules</h3>
+            <p><strong>When to Enter:</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Wait for Continuation candle to close beyond Correction high/low</li>
+              <li>Enter immediately after strong candle close OR on pullback to breakout level</li>
+              <li>Confirm: Is trend still valid on higher timeframe? Is volume present?</li>
+              <li>Set stop 2-4 points beyond Correction extreme (just outside structure)</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>Entry Types:</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li><strong>Aggressive:</strong> Enter on break of Correction structure (less confirmation, tighter risk)</li>
+              <li><strong>Conservative:</strong> Wait for retest of breakout level (more confirmation, may miss move)</li>
+              <li><strong>Partial:</strong> Enter half position on break, half on retest</li>
+            </ul>
+            <p style="margin-top:8px; background:var(--pink-75); padding:8px; border-radius:8px; font-size:13px;">💡 <strong>Tip:</strong> If you hesitate on entry, the setup probably isn't A+. Skip it and wait for the next one.</p>
+          </div>
+          <div style="grid-column: span 6;">
+            <h3 style="margin:8px 0; font-size:16px;">🚪 Exit Rules</h3>
+            <p><strong>Stop Loss (Always Set First):</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Place 2-4 points beyond Correction extreme</li>
+              <li>NEVER move stop against your position (no "giving it room")</li>
+              <li>If stopped out, setup was invalid—move on</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>Profit Target:</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li><strong>First target:</strong> Prior swing high/low from Indication (1.5-2R minimum)</li>
+              <li><strong>Extended target:</strong> Next liquidity pool or round number (if trend is very strong)</li>
+              <li><strong>Partial exit:</strong> Take half at 1.5R, let rest run to 2-3R with trailing stop</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>Exit Signals:</strong></p>
+            <ul style="color:var(--text-700); font-size:14px;">
+              <li>Target hit = close full position</li>
+              <li>Momentum slows (small candles, no follow-through) = exit at break-even or small profit</li>
+              <li>Reversal candle against you on 5m = exit immediately</li>
+              <li>Time-based: If no progress after 15-20 min, consider exiting</li>
+            </ul>
+          </div>
+        </div>
+        <div style="margin-top:12px; padding:12px; background:var(--pink-100); border:1px solid var(--border); border-radius:12px;">
+          <p style="margin:0; font-weight:600;">⚠️ Golden Rule: Protect Your Capital First</p>
+          <p style="color:var(--text-700); margin:6px 0 0 0; font-size:14px;">Never risk more than 1% per trade. Never move stops against you. Never add to a losing position. A bad exit you can survive. A bad entry without a stop will end you.</p>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>Trend Examples</h2>
+        <div class="row">
+          <div class="svg-box">
+            <div style="font-weight:600; margin-bottom:6px;">Uptrend</div>
+            <svg width="100%" height="120" viewBox="0 0 300 120">
+              <rect x="0" y="0" width="300" height="120" fill="#ffd2df" rx="12" />
+              <polyline points="10,95 60,70 90,82 130,55 170,68 210,40 260,52" fill="none" stroke="#7d3b5e" stroke-width="3" />
+            </svg>
+            <div class="svg-desc">Higher highs/lows; enter on pullbacks to support in NY session.</div>
+          </div>
+          <div class="svg-box">
+            <div style="font-weight:600; margin-bottom:6px;">Downtrend</div>
+            <svg width="100%" height="120" viewBox="0 0 300 120">
+              <rect x="0" y="0" width="300" height="120" fill="#ffdce7" rx="12" />
+              <polyline points="10,40 60,62 90,48 130,72 170,58 210,85 260,70" fill="none" stroke="#7d3b5e" stroke-width="3" />
+            </svg>
+            <div class="svg-desc">Lower highs/lows; enter after rallies reject at resistance.</div>
+          </div>
+        </div>
+        <div class="row" style="margin-top:8px;">
+          <div class="svg-box">
+            <div style="font-weight:600; margin-bottom:6px;">Range</div>
+            <svg width="100%" height="120" viewBox="0 0 300 120">
+              <rect x="0" y="0" width="300" height="120" fill="#ffe6ef" rx="12" />
+              <line x1="20" y1="40" x2="280" y2="40" stroke="#7d3b5e" stroke-width="2" stroke-dasharray="6 4" />
+              <line x1="20" y1="80" x2="280" y2="80" stroke="#7d3b5e" stroke-width="2" stroke-dasharray="6 4" />
+              <polyline points="20,60 60,72 100,50 140,70 180,55 220,75 260,60" fill="none" stroke="#7d3b5e" stroke-width="3" />
+            </svg>
+            <div class="svg-desc">No control; trade edges carefully or wait for structure shift.</div>
+          </div>
+          <div class="svg-box">
+            <div style="font-weight:600; margin-bottom:6px;">Breakout</div>
+            <svg width="100%" height="120" viewBox="0 0 300 120">
+              <rect x="0" y="0" width="300" height="120" fill="#ffc7d7" rx="12" />
+              <line x1="20" y1="80" x2="280" y2="80" stroke="#7d3b5e" stroke-width="2" stroke-dasharray="6 4" />
+              <polyline points="20,70 70,75 120,72 170,74 220,76 260,40" fill="none" stroke="#7d3b5e" stroke-width="3" />
+            </svg>
+            <div class="svg-desc">Look for liquidity sweep + rejection; prefer pullback entries.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>Candles vs Indicators</h2>
+        <div class="grid" style="grid-template-columns: repeat(12, 1fr); gap: 12px; align-items: start;">
+          <div class="svg-box" style="grid-column: span 6;">
+            <div style="font-weight:600; margin-bottom:6px;">Candles (OHLC)</div>
+            <svg width="100%" height="160" viewBox="0 0 320 160">
+              <rect x="0" y="0" width="320" height="160" rx="12" fill="#ffe6ef" />
+              <!-- Simple candlesticks -->
+              <!-- x, open, close, high, low -->
+              <!-- Up candles (pink fill), down candles (white fill) -->
+              <g stroke="#7d3b5e" stroke-width="2">
+                <!-- Candle 1 (up) -->
+                <line x1="30" y1="110" x2="30" y2="80" />
+                <line x1="30" y1="80" x2="30" y2="120" />
+                <rect x="22" y="95" width="16" height="20" fill="#ffd2df" stroke="#7d3b5e" />
+                <!-- Candle 2 (up) -->
+                <line x1="70" y1="100" x2="70" y2="70" />
+                <line x1="70" y1="70" x2="70" y2="115" />
+                <rect x="62" y="85" width="16" height="22" fill="#ffd2df" stroke="#7d3b5e" />
+                <!-- Candle 3 (down) -->
+                <line x1="110" y1="95" x2="110" y2="60" />
+                <line x1="110" y1="60" x2="110" y2="105" />
+                <rect x="102" y="72" width="16" height="18" fill="#fff" stroke="#7d3b5e" />
+                <!-- Candle 4 (up) -->
+                <line x1="150" y1="90" x2="150" y2="55" />
+                <line x1="150" y1="55" x2="150" y2="100" />
+                <rect x="142" y="68" width="16" height="18" fill="#ffd2df" stroke="#7d3b5e" />
+                <!-- Candle 5 (down) -->
+                <line x1="190" y1="85" x2="190" y2="50" />
+                <line x1="190" y1="50" x2="190" y2="95" />
+                <rect x="182" y="62" width="16" height="18" fill="#fff" stroke="#7d3b5e" />
+                <!-- Candle 6 (up) -->
+                <line x1="230" y1="75" x2="230" y2="45" />
+                <line x1="230" y1="45" x2="230" y2="85" />
+                <rect x="222" y="58" width="16" height="16" fill="#ffd2df" stroke="#7d3b5e" />
+                <!-- Candle 7 (up) -->
+                <line x1="270" y1="70" x2="270" y2="40" />
+                <line x1="270" y1="40" x2="270" y2="80" />
+                <rect x="262" y="52" width="16" height="18" fill="#ffd2df" stroke="#7d3b5e" />
+              </g>
+            </svg>
+            <div class="svg-desc">Candles show open, high, low, close and wicks — the raw facts of buyer/seller behavior.</div>
+          </div>
+          <div class="svg-box" style="grid-column: span 6;">
+            <div style="font-weight:600; margin-bottom:6px;">Indicator (Moving Average)</div>
+            <svg width="100%" height="160" viewBox="0 0 320 160">
+              <rect x="0" y="0" width="320" height="160" rx="12" fill="#ffe6ef" />
+              <!-- Price line (stylized) -->
+              <polyline points="20,110 60,95 100,80 140,85 180,75 220,65 260,60 300,55" fill="none" stroke="#7d3b5e" stroke-width="3" />
+              <!-- Moving average (smoother and lagging) -->
+              <polyline points="20,120 60,105 100,92 140,90 180,82 220,72 260,66 300,62" fill="none" stroke="#a04d6b" stroke-width="2" stroke-dasharray="6 4" />
+            </svg>
+            <div class="svg-desc">Indicators summarize past price (they lag). ICC relies on candles for structure, rejection, and timing.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: span 12;">
+        <h2>Daily Prep — Why These Matter</h2>
+        <ul style="color:var(--text-700)">
+          <li>Economic calendar: avoid news whipsaw; many moves are liquidity grabs.</li>
+          <li>Overnight high/low: likely sweep zones at NY open; frame bias.</li>
+          <li>Opening range: defines structure; edges plan risk and quality.</li>
+          <li>Key levels: prior day H/L, VWAP, 5m swings = stops/targets.</li>
+          <li>Primary instrument: one market → cleaner reads → better execution.</li>
+          <li>Risk/trade: 0.5–1% caps loss; enables consistency over time.</li>
+          <li>Hotkeys/OCO: enforces stops/targets; reduces emotional errors.</li>
+          <li>A+ setups only: trade clean ICC structures; skip chop.</li>
+        </ul>
+      </section>
+    </div>
+
+    <footer style="margin:24px 0; color:var(--text-700); font-size:13px;">Set your market here, then open the Journal.</footer>
+  </div>
+
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }
+    const PRESETS = {
+      ES: { tickSize: 0.25, tickValue: 12.5 },
+      MES: { tickSize: 0.25, tickValue: 1.25 },
+      NQ: { tickSize: 0.25, tickValue: 5 },
+      MNQ: { tickSize: 0.25, tickValue: 0.5 }
+    };
+    const KEY = 'pinkJournalInstrument';
+    const NOTES_KEY = 'pinkJournalNotes';
+    
+    // Instrument selection
+    function loadInstrument(){
+      const saved = localStorage.getItem(KEY) || '';
+      document.querySelectorAll('input[name="instrument"]').forEach(r => { r.checked = (r.value === saved); });
+      if (saved){ document.getElementById('instrumentStatus').textContent = `Saved: ${saved} (tick ${PRESETS[saved].tickSize}, $${PRESETS[saved].tickValue}/tick)`; }
+    }
+    function saveInstrument(){
+      const sel = Array.from(document.querySelectorAll('input[name="instrument"]')).find(r => r.checked);
+      if (!sel){ alert('Pick a market first.'); return; }
+      localStorage.setItem(KEY, sel.value);
+      loadInstrument();
+      alert('Market saved. Open the Journal.');
+    }
+    document.getElementById('saveInstrument').addEventListener('click', saveInstrument);
+    document.getElementById('clearInstrument').addEventListener('click', () => { localStorage.removeItem(KEY); loadInstrument(); });
+    loadInstrument();
+
+    // Open Notes functionality
+    const notesDateInput = document.getElementById('notesDate');
+    const notesTextarea = document.getElementById('notesTextarea');
+    
+    function getTodayString() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+    
+    function loadNotes() {
+      const dateStr = notesDateInput.value || getTodayString();
+      const notesData = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}');
+      notesTextarea.value = notesData[dateStr] || '';
+    }
+    
+    function saveNotes() {
+      const dateStr = notesDateInput.value || getTodayString();
+      if (!dateStr) {
+        alert('Please select a date.');
+        return;
+      }
+      const notesData = JSON.parse(localStorage.getItem(NOTES_KEY) || '{}');
+      notesData[dateStr] = notesTextarea.value;
+      localStorage.setItem(NOTES_KEY, JSON.stringify(notesData));
+      alert('Notes saved for ' + dateStr);
+    }
+    
+    // Initialize notes date to today and load notes
+    notesDateInput.value = getTodayString();
+    loadNotes();
+    
+    // Event listeners
+    notesDateInput.addEventListener('change', loadNotes);
+    document.getElementById('saveNotes').addEventListener('click', saveNotes);
+  </script>
+</body>
+</html>
